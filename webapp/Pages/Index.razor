@@ -1,9 +1,70 @@
 ﻿@page "/"
+@inject ICompileService service
 
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<div>
+    <div class="form-group">
+        <label for="exampleFormControlTextarea1">C# Code</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@CsCode"></textarea>
+    </div>
+    <button type="button" class="btn btn-primary" @onclick="Run">Run</button>
+    <div class="card">
+        <div class="card-body">
+            <pre>@ResultText</pre>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <pre>@CompileText</pre>
+        </div>
+    </div>
+</div>
 
-Welcome to your new app.
+@functions{
+    private string CsCode { get; set; }
+    private string ResultText { get; set; }
+    private string CompileText { get; set; }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    public async Task Run()
+    {
+        try
+        {
+            service.CompileLog = new List<string>();
+            ResultText = await service.CompileAndRun(CsCode);
+        }
+        catch (Exception ex)
+        {
+            service.CompileLog.Add(ex.Message);
+            service.CompileLog.Add(ex.StackTrace);
+            throw;
+        }
+        finally
+        {
+            CompileText = string.Join("\r\n", service.CompileLog);
+            this.StateHasChanged();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        CsCode = @"
+using System.Text;
+namespace webapp.Demo
+{
+    public class RunClass
+    {
+        public string Run(string name, int count)
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < count; i++)
+            {
+                sb.AppendLine($""{i}) Hello, {name}!"");
+            }
+            return sb.ToString();
+        }
+    }
+}
+";
+    }
+}
