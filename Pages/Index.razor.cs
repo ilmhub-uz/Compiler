@@ -80,18 +80,20 @@ Console.WriteLine(a[2]);
             }
             var result1 = writer.ToString();
             var result2 = (await _httpClient.GetStringAsync("sample-data/1/1.out"));
-            if((result1.TrimEnd() == result2.TrimEnd()))
-            {
-                Output = "Success";
-            }
-            else if(exception != null)
-            {
-                Output = "Runtime error\r\n" + exception.ToString();
-            }
-            else
-            {
-                Output = "Wrong answer";
-            }
+            Output=result1;
+            //tekshiruv qismi sample datadan keladi
+            // if((result1.TrimEnd() == result2.TrimEnd()))
+            // {
+            //     Output = "Success";
+            // }
+            // else if(exception != null)
+            // {
+            //     Output = "Runtime error\r\n" + exception.ToString();
+            // }
+            // else
+            // {
+            //     Output = "Wrong answer";
+            // }
         
             Console.SetOut(currentOut);
             sw.Stop();
